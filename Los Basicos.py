@@ -94,7 +94,7 @@ for i in notes:
 
 print("N=", N, " moyenne = %2.2f" % (somme/N))
 
-#%% Break loop
+#%% Breaker style loop
 notes = [10.4, 7.6, 13.5, -10, 14.5, -4, 15]
 
 somme = 0
@@ -119,3 +119,29 @@ print("N=", N, " moyenne = %2.2f" % (somme/N))
 
 #%% Remove all variables
 globals().clear()
+
+#%% Numba accelerates functions (and nothing else)
+#tester numba/numba01b.py
+import numpy as np
+from numba import njit
+from time import time
+def sansNumba(x):
+    for i in range(x.size):
+        x[i] = np.exp(-i)
+@njit
+def avecNumba(x):
+    for i in range(x.size):
+        x[i] = np.exp(-i)
+x = np.empty(int(1e7))
+avecNumba(x) # pour lancer le jit la première fois
+start = time()
+sansNumba(x)
+end = time()
+t1 = end - start
+print("sansNumba: ", t1)
+start = time()
+avecNumba(x)
+end = time()
+t2 = end - start
+print("avecNumba: ", t2)
+print("facteur d'accélération: ", t1/t2)    
